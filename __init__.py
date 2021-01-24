@@ -46,7 +46,11 @@ class Nextapp(MycroftSkill):
 
     @intent_file_handler('nextapp.intent')
     def handle_nextapp(self, message):
-        self.speak_dialog('nextapp')
+        try:
+            response = {'apptoday': caldavAppointment}
+            self.speak_dialog('nextapp', data = response)
+        except:
+            self.speak_dialog("no_event")
 
 
 def create_skill():
