@@ -47,8 +47,34 @@ class Nextapp(MycroftSkill):
     @intent_file_handler('nextapp.intent')
     def handle_nextapp(self, message):
         try:
-            response = {'apptoday': caldavAppointment}
-            self.speak_dialog('nextapp', data = response)
+            if len(calendars) > 0:
+                calendar = calendars[0]
+                events = calendar.date_search(today,
+                                              datetime.combine(today, time(23, 59, 59, 59)))  # Events am heutigen Tag
+
+                if len(events) == 0:
+                    print("No events today!")
+                else:
+                    print("Total {num_events} events:".format(num_events=len(events)))
+
+                    for event in events:
+                        event.load()
+                        e = event.instance.vevent
+                        if e.dtstart.value.strftime("%H:%M") == "00:00":
+                            # Überprüfung von ganztägigen Events
+                            eventTime = e.dtstart.value.strftime("%D")
+                            print(
+                                "{eventTime} {eventSummary}".format(eventTime=eventTime, eventSummary=e.summary.value))
+                            caldavAppointment = "{eventTime} {eventSummary}".format(eventTime=eventTime,eventSummary=e.summary.value)  ## Unsere Aufruf Variabel
+                            response = {'apptoday': caldavAppointment}
+                            self.speak_dialog('nextapp', data=response)
+                        else:
+                            # This is a "normal" event
+                            eventTime = e.dtstart.value.strftime("%H:%M")
+                            print(
+                                "{eventTime} {eventSummary})".format(eventTime=eventTime, eventSummary=e.summary.value))
+
+
         except:
             self.speak_dialog("no_event")
 
