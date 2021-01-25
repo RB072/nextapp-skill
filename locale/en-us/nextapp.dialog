@@ -1,3 +1,3 @@
-This is your next appointment {apptoday} {apphour}
-You have appointments on {apptoday}{apphour}
-The next thing is {apptoday}
+This is your next appointment {nextAppointment}
+You have appointments on {nextAppointment}
+The next thing is {nextAppointment}

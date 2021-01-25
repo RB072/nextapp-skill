@@ -53,24 +53,59 @@ class Nextapp(MycroftSkill):
                     for event in events:
                         event.load()
                         e = event.instance.vevent
-                        if e.dtstart.value.strftime("%H:%M") == "00:00":
-                            # Überprüfung von ganztägigen Events
-                            eventTime = e.dtstart.value.strftime("%D")
+                        #Abfragen der aktuellen Zeit und der Eventzeit
+                        eventTime = e.dtstart.value.strftime("%H:%M")
+                        aktuelleZeit = datetime.now().strftime("%H:%M")
+                        if aktuelleZeit > eventTime:
                             print(
                                 "{eventTime} {eventSummary}".format(eventTime=eventTime, eventSummary=e.summary.value))
-                            caldavAppointment = "{eventTime} {eventSummary}".format(eventTime=eventTime,eventSummary=e.summary.value)  ## Unsere Aufruf Variabel
-                            response = {'apptoday': caldavAppointment}
+                            nextAppointmentValue = "{eventTime} {eventSummary}".format(eventTime=eventTime,eventSummary=e.summary.value)  ## Unsere Aufruf Variabel
+                            response = {'nextAppointment': nextAppointmentValue}
                             self.speak_dialog('nextapp', data=response)
                         else:
-                            # This is a "normal" event
-                            eventTime = e.dtstart.value.strftime("%H:%M")
-                            print(
-                                "{eventTime} {eventSummary})".format(eventTime=eventTime, eventSummary=e.summary.value))
-                            caldavAppointmentHour = "{eventTime} {eventSummary})".format(eventTime=eventTime, eventSummary=e.summary.value)
-                            response = {'appointmentHour':caldavAppointmentHour}
-                            self.speak_dialog('hourAppointment', data=response)
+                            self.speak_dialog('events_done')
+
         except:
             self.speak_dialog("no_event")
+
+    #Erweiterung für alle Events am heutigen Tag
+    @intent_file_handler('events_today.intent')
+    def handle_today_events(self, message):
+            try:
+                if len(calendars) > 0:
+                    calendar = calendars[0]
+                    events = calendar.date_search(today,
+                                                  datetime.combine(today,
+                                                                   time(23, 59, 59, 59)))  # Events am heutigen Tag
+                    if len(events) == 0:
+                        print("No events today!")
+                    else:
+                        print("Total {num_events} events:".format(num_events=len(events)))
+                        for event in events:
+                            event.load()
+                            e = event.instance.vevent
+                            if e.dtstart.value.strftime("%H:%M") == "00:00":
+                                #Ausgabe von ganztägigen Events
+                                eventTime = e.dtstart.value.strftime("%D")
+                                print(
+                                    "{eventTime} {eventSummary}".format(eventTime=eventTime,
+                                                                        eventSummary=e.summary.value))
+                                dayEvent = "{eventTime} {eventSummary}".format(eventTime=eventTime,
+                                                                                        eventSummary=e.summary.value)  ## Unsere Aufruf Variabel
+                                response = {'allDayEvent': dayEvent}
+                                self.speak_dialog('events_today', data=response)
+                            else:
+                                # This is a "normal" event
+                                eventTime = e.dtstart.value.strftime("%H:%M")
+                                print(
+                                    "{eventTime} {eventSummary})".format(eventTime=eventTime,
+                                                                         eventSummary=e.summary.value))
+                                hourAppointment = "{eventTime} {eventSummary})".format(eventTime=eventTime,
+                                                                                             eventSummary=e.summary.value)
+                                response = {'appointmentHour': hourAppointment}
+                                self.speak_dialog('hourAppointment', data=response)
+            except:
+                self.speak_dialog("no_event")
 
 def create_skill():
     return Nextapp()
