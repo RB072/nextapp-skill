@@ -15,7 +15,7 @@ principal = client.principal()
 # get all available calendars (for this user)
 calendars = principal.calendars()
 # check the calendar events and parse results..
-if len(calendars) > 0:
+'''if len(calendars) > 0:
   calendar = calendars[0]
   events = calendar.date_search(today, datetime.combine(today, time(23,59,59,59))) #Events am heutigen Tag
   if len(events) == 0:
@@ -33,7 +33,7 @@ if len(calendars) > 0:
       else:
         # This is a "normal" event
         eventTime = e.dtstart.value.strftime("%H:%M")
-        print("{eventTime} {eventSummary})".format(eventTime=eventTime, eventSummary=e.summary.value))
+        print("{eventTime} {eventSummary})".format(eventTime=eventTime, eventSummary=e.summary.value))'''
 class Nextapp(MycroftSkill):
     def __init__(self):
         MycroftSkill.__init__(self)
@@ -67,8 +67,8 @@ class Nextapp(MycroftSkill):
                             print(
                                 "{eventTime} {eventSummary})".format(eventTime=eventTime, eventSummary=e.summary.value))
                             caldavAppointmentHour = "{eventTime} {eventSummary})".format(eventTime=eventTime, eventSummary=e.summary.value)
-                            response = {'apphour':caldavAppointmentHour}
-                            self.speak_dialog('nextapp', data=response)
+                            response = {'appointmentHour':caldavAppointmentHour}
+                            self.speak_dialog('hourAppointment', data=response)
         except:
             self.speak_dialog("no_event")
 
