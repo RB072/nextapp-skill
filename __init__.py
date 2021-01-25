@@ -66,8 +66,9 @@ class Nextapp(MycroftSkill):
                             eventTime = e.dtstart.value.strftime("%H:%M")
                             print(
                                 "{eventTime} {eventSummary})".format(eventTime=eventTime, eventSummary=e.summary.value))
-
-
+                            caldavAppointmentHour = "{eventTime} {eventSummary})".format(eventTime=eventTime, eventSummary=e.summary.value)
+                            response = {'apphour':caldavAppointmentHour}
+                            self.speak_dialog('nextapp', data=response)
         except:
             self.speak_dialog("no_event")
 
