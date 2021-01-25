@@ -1,13 +1,14 @@
 from mycroft import MycroftSkill, intent_file_handler
 import caldav
-import os
+import yaml
 from caldav.elements import dav
 from datetime import datetime, timedelta, time
 today  = datetime.combine(datetime.today(), time(0,0))
 # Caldav url
 # Works on both Win or LinuxS
-username = os.environ.get('_siNextcloudUser')
-password = os.environ.get('_siNextcloudPW')
+conf = yaml.load(open('/home/pi/application.yml'))
+username = conf['user']['_siNextcloudUser']
+password = conf['user']['_siNextcloudPW']
 
 url = "https://" + username + ":" + password + "@next.social-robot.info/nc/remote.php/dav"
 # open connection to calendar
