@@ -109,7 +109,8 @@ class Nextapp(MycroftSkill):
                                 response = {'appointmentHour': hourAppointment}
                                 self.speak_dialog('hourAppointment', data=response)
             except:
-                self.speak_dialog("no_event")
+                print("Missing some Information. try to create a new event")
+                #self.speak_dialog("no_event")
 
 def create_skill():
     return Nextapp()
