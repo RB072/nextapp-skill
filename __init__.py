@@ -2,7 +2,7 @@ from mycroft import MycroftSkill, intent_file_handler
 import caldav
 import os
 from caldav.elements import dav
-from datetime import datetime, timedelta, time
+from datetime import datetime, timedelta, time, date
 today  = datetime.combine(datetime.today(), time(0,0))
 # Caldav url
 # Works on both Win or LinuxS
@@ -111,6 +111,24 @@ class Nextapp(MycroftSkill):
             except:
                 print("Missing some Information. try to create a new event")
                 #self.speak_dialog("no_event")
+
+    @intent_file_handler('events_at.intent')
+    def handle_events_at(self, message):
+        userDate = message.data.get('date')
+        try:
+            setDate = userDate
+            print(setDate)
+            #eingabetime = datetime.combine(date(setDate), time(0,0))
+            #endtime = datetime.combine(date(setDate), time(23, 59, 59, 59))
+            #if len(calendars) > 0:
+            #    calendar = calendars[0]
+            #    events = calendar.date_search(start=eingabetime,
+            #                          end=endtime)
+
+        except:
+            self.speak_dialog('no_event')
+
+
 
 def create_skill():
     return Nextapp()
