@@ -44,26 +44,31 @@ class Nextapp(MycroftSkill):
                 calendar = calendars[0]
                 events = calendar.date_search(today,
                                               datetime.combine(today, time(23, 59, 59, 59)))  # Events am heutigen Tag
-
                 if len(events) == 0:
-                    print("No events today!")
+                    self.speak_dialog("no_event")
                 else:
                     print("Total {num_events} events:".format(num_events=len(events)))
-
+                    listNextAppointments = []
                     for event in events:
                         event.load()
                         e = event.instance.vevent
                         eventTime = e.dtstart.value.strftime("%H:%M")
-                        aktuelleZeit = datetime.now().strftime("%I:%M")
+                        eventVal = "{eventTime} {eventSummary}".format(eventTime=eventTime,
+                                                                       eventSummary=e.summary.value)
+                        aktuelleZeit = datetime.now().strftime("%H:%M")
                         if aktuelleZeit < eventTime:
-                            print(
-                                "{eventTime} {eventSummary}".format(eventTime=eventTime, eventSummary=e.summary.value))
-                            nextAppointmentValue = "{eventTime} {eventSummary}".format(eventTime=eventTime,eventSummary=e.summary.value)  ## Unsere Aufruf Variabel
-                            response = {'nextAppointment': nextAppointmentValue}
-                            self.speak_dialog('nextapp', data=response)
+                            listNextAppointments.append((eventVal))
+                            print(listNextAppointments)
+                        elif e.dtstart.value.strftime("%H:%M") == "00:00":
+                            dailyEventSum = "{eventSummary}".format(eventSummary=e.summary.value)
+                            response = {'dailyEventDialog':dailyEventSum}
+                            self.speak_dialog('daily_event', data = response)
                         else:
                             self.speak_dialog('events_done')
-
+                    listNextAppointments.sort()
+                    nextAppointmentValue = listNextAppointments[0]
+                    response ={'nextAppointment':nextAppointmentValue}
+                    self.speak_dialog('nextapp', data=response)
         except:
             self.speak_dialog("no_event")
 
