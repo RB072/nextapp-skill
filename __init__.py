@@ -3,14 +3,13 @@ import caldav
 import os
 from caldav.elements import dav
 from datetime import datetime, timedelta, time
-import config
+
 today  = datetime.combine(datetime.today(), time(0,0))
 # Caldav url
 # Works on both Win or LinuxS
-username=config.username
-password=config.password
-#username = os.environ.get('_siNextcloudUser')
-#password = os.environ.get('_siNextcloudPW')
+
+username = os.environ.get('_siNextcloudUser')
+password = os.environ.get('_siNextcloudPW')
 url = "https://" + username + ":" + password + "@next.social-robot.info/nc/remote.php/dav"
 # open connection to calendar
 client = caldav.DAVClient(url)
