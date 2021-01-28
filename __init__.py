@@ -3,11 +3,14 @@ import caldav
 import os
 from caldav.elements import dav
 from datetime import datetime, timedelta, time
+import config
 today  = datetime.combine(datetime.today(), time(0,0))
 # Caldav url
 # Works on both Win or LinuxS
-username = os.environ.get('_siNextcloudUser')
-password = os.environ.get('_siNextcloudPW')
+username=config.username
+password=config.password
+#username = os.environ.get('_siNextcloudUser')
+#password = os.environ.get('_siNextcloudPW')
 url = "https://" + username + ":" + password + "@next.social-robot.info/nc/remote.php/dav"
 # open connection to calendar
 client = caldav.DAVClient(url)
@@ -53,9 +56,16 @@ class Nextapp(MycroftSkill):
                     for event in events:
                         event.load()
                         e = event.instance.vevent
+<<<<<<< Updated upstream
                         if e.dtstart.value.strftime("%H:%M") == "00:00":
                             # Überprüfung von ganztägigen Events
                             eventTime = e.dtstart.value.strftime("%D")
+=======
+                        #Abfragen der aktuellen Zeit und der Eventzeit
+                        eventTime = e.dtstart.value.strftime("%H:%M")
+                        aktuelleZeit = datetime.now().strftime("%I:%M")
+                        if aktuelleZeit < eventTime:
+>>>>>>> Stashed changes
                             print(
                                 "{eventTime} {eventSummary}".format(eventTime=eventTime, eventSummary=e.summary.value))
                             caldavAppointment = "{eventTime} {eventSummary}".format(eventTime=eventTime,eventSummary=e.summary.value)  ## Unsere Aufruf Variabel
