@@ -6,8 +6,10 @@ from datetime import datetime, timedelta, time, date
 today  = datetime.combine(datetime.today(), time(0,0))
 # Caldav url
 # Works on both Win or LinuxS
-username = os.environ.get('_siNextcloudUser')
-password = os.environ.get('_siNextcloudPW')
+username =""
+password =""
+#username = os.environ.get('_siNextcloudUser')
+#password = os.environ.get('_siNextcloudPW')
 url = "https://" + username + ":" + password + "@next.social-robot.info/nc/remote.php/dav"
 # open connection to calendar
 client = caldav.DAVClient(url)
@@ -116,17 +118,17 @@ class Nextapp(MycroftSkill):
     def handle_events_at(self, message):
         userDate = message.data.get('date')
         try:
-            setDate = userDate
+            setDate = datetime.fromisoformat(userDate)
             print(setDate)
             #eingabetime = datetime.combine(date(setDate), time(0,0))
-            #endtime = datetime.combine(date(setDate), time(23, 59, 59, 59))
-            #if len(calendars) > 0:
-            #    calendar = calendars[0]
-            #    events = calendar.date_search(start=eingabetime,
-            #                          end=endtime)
+            endtime = datetime.combine(date(setDate), time(23, 59, 59, 59))
+            if len(calendars) > 0:
+                calendar = calendars[0]
+                events = calendar.date_search(start=setDate,
+                                      end=endtime)
 
         except:
-            self.speak_dialog('no_event')
+            self.speak_dialog('got_no_date')
 
 
 
