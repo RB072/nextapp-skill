@@ -116,17 +116,41 @@ class Nextapp(MycroftSkill):
 
     @intent_file_handler('events_at.intent')
     def handle_events_at(self, message):
-        userDate = message.data.get('date')
+        intentDatum = message.data.get('datum')
+        print(intentDatum)
         try:
-            setDate = datetime.fromisoformat(userDate)
-            print(setDate)
-            #eingabetime = datetime.combine(date(setDate), time(0,0))
-            endtime = datetime.combine(date(setDate), time(23, 59, 59, 59))
+            setDatum = datetime.strptime(intentDatum, "%d-%m-%Y")
+            endTime = datetime.combine(setDatum, time(23, 59, 59, 59))
             if len(calendars) > 0:
                 calendar = calendars[0]
-                events = calendar.date_search(start=setDate,
-                                      end=endtime)
-
+                events = calendar.date_search(start=setDatum,
+                                      end=endTime)
+                if len(events) == 0:
+                    self.speak_dialog('no event')
+                else:
+                    for event in events:
+                        event.load()
+                        e = event.instance.vevent
+                        if e.dtstart.value.strftime("%H:%M") == "00:00":
+                            # Ausgabe von ganztägigen Events
+                            eventTime = e.dtstart.value.strftime("%D")
+                            print(
+                                "{eventTime} {eventSummary}".format(eventTime=eventTime,
+                                                                    eventSummary=e.summary.value))
+                            dayEvent = "{eventTime} {eventSummary}".format(eventTime=eventTime,
+                                                                           eventSummary=e.summary.value)  ## Unsere Aufruf Variabel
+                            response = {'allDayEvent': dayEvent}
+                            self.speak_dialog('events_today', data=response)
+                        else:
+                            # This is a "normal" event
+                            eventTime = e.dtstart.value.strftime("%H:%M")
+                            print(
+                                "{eventTime} {eventSummary})".format(eventTime=eventTime,
+                                                                     eventSummary=e.summary.value))
+                            hourAppointment = "{eventTime} {eventSummary})".format(eventTime=eventTime,
+                                                                                   eventSummary=e.summary.value)
+                            response = {'appointmentHour': hourAppointment}
+                            self.speak_dialog('hourAppointment', data=response)
         except:
             self.speak_dialog('got_no_date')
 
